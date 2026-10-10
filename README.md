@@ -43,6 +43,9 @@
 │   └── package.json
 ├── database/                                  # SQL initialization scripts
 │   └── init.sql                               # schema + seed assets (runs on first DB start)
+├── docs/
+│   └── docker/
+│       └── README.md                          # Docker CE install guide (WSL Ubuntu)
 ├── docker-compose.yml                         # orchestrates db + backend + frontend
 ├── .env.example                               # DB credentials template (copy to .env)
 ├── .gitignore
@@ -57,62 +60,19 @@ How the pieces fit together:
 - **frontend** polls `/api/assets` every 2 s and draws each asset as a mesh.
   WARNING assets glow orange and ALARM assets pulse red. Use the mouse to orbit, pan and zoom.
 
-## 1. Install Docker CE (Ubuntu / WSL2)
+## Prerequisites
 
-These steps install Docker Engine inside the WSL Ubuntu distro, without Docker Desktop.
+- Docker Engine with the Compose plugin. On WSL Ubuntu, follow [docs/docker/README.md](docs/docker/README.md).
+- For local development without Docker only: JDK 21, Maven, and Node.js 22+.
 
-**WSL only:** first make sure systemd is on. Check that `/etc/wsl.conf` contains the lines below:
-
-```ini
-[boot]
-systemd=true
-```
-
-If you had to add them, run `wsl --shutdown` from Windows PowerShell and then reopen Ubuntu.
-
-```bash
-# Remove any old or unofficial packages (safe if none are installed)
-for pkg in docker.io docker-doc docker-compose docker-compose-v2 podman-docker containerd runc; do
-  sudo apt-get remove -y $pkg
-done
-
-# Add Docker's official GPG key and apt repository
-sudo apt-get update
-sudo apt-get install -y ca-certificates curl
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
-
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] \
-https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" \
-  | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-# Install Docker Engine, CLI, containerd, Buildx and the Compose plugin
-sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-
-# Start Docker now and on every boot
-sudo systemctl enable --now docker
-
-# Let your user run docker without sudo (then log out/in, or run `newgrp docker`)
-sudo usermod -aG docker $USER
-
-# Verify
-docker run --rm hello-world
-docker compose version
-```
-
-> If `apt-get update` reports that Docker's repo has no `Release` file for your Ubuntu codename,
-> Docker hasn't published packages for that release yet. In the `docker.list` line, replace the
-> codename with the newest LTS that Docker lists at https://download.docker.com/linux/ubuntu/dists/,
-> then run the install again.
-
-## 2. Run the stack
+## Running the stack
 
 ```bash
 cp .env.example .env          # optional; edit credentials here
 docker compose up --build     # add -d to run in the background
 ```
+
+The first run downloads the base images (Postgres, Maven, Temurin, Node, nginx), so it takes a while.
 
 | URL                                   | What                            |
 |---------------------------------------|---------------------------------|
@@ -133,10 +93,21 @@ curl -X PUT localhost:8080/api/assets/1/position \
      -H 'Content-Type: application/json' -d '{"x":3,"y":0.5,"z":-2}'
 ```
 
-## 3. Local development without rebuilding images (optional)
+## Developing
+
+Change code and rebuild only the affected service:
+
+```bash
+docker compose up --build backend     # after backend changes
+docker compose up --build frontend    # after frontend changes
+```
+
+Faster loop without rebuilding images:
 
 ```bash
 docker compose up db                            # just the database
-cd backend  && mvn spring-boot:run              # needs JDK 21 + Maven
+cd backend  && mvn spring-boot:run              # http://localhost:8080
 cd frontend && npm install && npm start         # http://localhost:4200, /api proxied to :8080
 ```
+
+Schema changes go in `database/init.sql`. That script only runs when the database volume is empty, so run `docker compose down -v` to apply them.
