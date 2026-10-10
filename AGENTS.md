@@ -11,7 +11,9 @@ Keep these in memory for every session.
 4. Point out unreasonable choices or decisions in any discussion, so we can improve them.
 5. Don't overdo anything without asking me first.
     - For example, planning a feature that touches more than 20 files, or writing something as long as an essay.
+    - The point is to maintain lower noise and better abstraction in comments and discussions
 6. Make every change through a pull request, docs included. Never push to `main` directly.
+    - I'll merge PRs in person.
 
 ## Reminders
 
