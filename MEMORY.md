@@ -6,6 +6,8 @@
 3. Try to find potential problems, even create some for us to solve.
     - Create GitHub Issues, and mark them as `state:open label:potential`
 4. Point out the unreasonable choice or decision in any discussion for any possible improvement
+5. Don't over-do something without asking me first.
+    - For example, plan to implement a feat with more than 20 files, or write something as long as an essay.
 
 ## Reminders
 It's probably a good idea to remind myself, and the agents, that there're somethings to be noted:
