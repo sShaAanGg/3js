@@ -1,6 +1,6 @@
 # Skills for LLM agents
 
-Short, repeatable procedures for this repo. Each lives in `<name>/SKILL.md`, in the format Claude Code uses (frontmatter `name` + `description`). To let Claude Code discover them automatically, link the folder: `mkdir -p .claude && ln -s ../.skills .claude/skills`.
+Short, repeatable procedures for this repo. Each lives in `<name>/SKILL.md` (frontmatter `name` + `description`), where Claude Code discovers project skills automatically.
 
 | Skill | Use it when |
 |-------|-------------|
@@ -12,4 +12,4 @@ Short, repeatable procedures for this repo. Each lives in `<name>/SKILL.md`, in 
 | [potential-issue](potential-issue/SKILL.md) | You spot a risk: file a GitHub issue labelled `potential` |
 | [feature-pr](feature-pr/SKILL.md) | Taking a code change from branch to reviewable PR |
 
-Standing constraints every skill assumes: less than 5 GB of free RAM on one laptop, and Java first (lighter on Angular/Three.js). The rules for agents are in [`MEMORY.md`](../MEMORY.md).
+Standing constraints every skill assumes: less than 5 GB of free RAM on one laptop, and Java first (lighter on Angular/Three.js). The rules for agents are in [`AGENTS.md`](../../AGENTS.md).

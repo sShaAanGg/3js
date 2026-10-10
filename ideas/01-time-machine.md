@@ -35,7 +35,7 @@ Diff mode and event markers come next.
 
 ## Status: chosen (2026-10-10)
 
-This is the direction we're building first. The full discussion is summarized in [ideas/README.md](README.md#decision-time-machine-first-2026-10-10). In short, two real limits made this idea the best fit, and they also shape how it's built:
+This is the direction we're building first. The full discussion is summarized in [decision 0001](../docs/decisions/0001-time-machine-first.md). In short, two real limits made this idea the best fit, and they also shape how it's built:
 
 - **Under 5 GB of free RAM** (one laptop running the whole stack under WSL2).
   *Why it fits:* history lives in the Postgres we already run, so no new service is needed, and the data volume is tiny when only meaningful changes are stored.
