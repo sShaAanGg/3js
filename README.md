@@ -1,11 +1,52 @@
 # Digital Twin (Spring Boot + Angular/Three.js + PostgreSQL)
 
+## Project structure
+
 ```
-my-digital-twin-project/
-├── backend/            Spring Boot 3 (Java 21, Maven): REST API + sensor simulator
-├── frontend/           Angular 19 + Three.js, served by nginx (proxies /api → backend)
-├── database/init.sql   Schema + seed assets (runs on first DB start)
-└── docker-compose.yml  db + backend + frontend
+3js/
+├── backend/                                   # Java Spring Boot app
+│   ├── src/main/
+│   │   ├── java/com/example/digitaltwin/
+│   │   │   ├── DigitalTwinApplication.java    # entry point (enables scheduling)
+│   │   │   ├── asset/
+│   │   │   │   ├── Asset.java                 # JPA entity for the asset table
+│   │   │   │   ├── AssetRepository.java       # Spring Data repository
+│   │   │   │   └── AssetController.java       # REST API under /api/assets
+│   │   │   └── simulation/
+│   │   │       └── SensorSimulator.java       # fake sensor data (temperature/status)
+│   │   └── resources/
+│   │       └── application.yml                # DB connection, simulator settings
+│   ├── Dockerfile                             # Maven build → JRE 21 runtime
+│   ├── .dockerignore
+│   └── pom.xml
+├── frontend/                                  # Angular + Three.js app
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── scene/
+│   │   │   │   ├── twin-scene.component.ts    # Three.js scene, render loop, API polling
+│   │   │   │   ├── twin-scene.component.html  # canvas + status panel
+│   │   │   │   └── twin-scene.component.css
+│   │   │   ├── services/
+│   │   │   │   └── asset.service.ts           # HTTP client for /api/assets
+│   │   │   ├── app.component.ts
+│   │   │   └── app.config.ts
+│   │   ├── index.html
+│   │   ├── main.ts
+│   │   └── styles.css
+│   ├── Dockerfile                             # Node build → nginx runtime
+│   ├── nginx.conf                             # serves the app, proxies /api → backend
+│   ├── proxy.conf.json                        # /api proxy for `npm start` (local dev)
+│   ├── angular.json
+│   ├── tsconfig.json
+│   ├── tsconfig.app.json
+│   ├── .dockerignore
+│   └── package.json
+├── database/                                  # SQL initialization scripts
+│   └── init.sql                               # schema + seed assets (runs on first DB start)
+├── docker-compose.yml                         # orchestrates db + backend + frontend
+├── .env.example                               # DB credentials template (copy to .env)
+├── .gitignore
+└── README.md
 ```
 
 How the pieces fit together:
@@ -69,7 +110,6 @@ docker compose version
 ## 2. Run the stack
 
 ```bash
-cd my-digital-twin-project
 cp .env.example .env          # optional; edit credentials here
 docker compose up --build     # add -d to run in the background
 ```
