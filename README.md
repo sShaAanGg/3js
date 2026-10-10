@@ -120,7 +120,7 @@ If something doesn't start or behaves oddly, see [docs/troubleshooting.md](docs/
 
 ## Memory limits
 
-The stack is tuned to run on a laptop with little free RAM. In `docker-compose.yml`:
+The stack is tuned to run on a laptop with less than 5 GB of free RAM. That limit is a deliberate design constraint, and one of the two reasons the time machine was picked as the first feature (see [the decision summary](ideas/README.md#decision-time-machine-first-2026-10-10)). In `docker-compose.yml`:
 
 | Service | `mem_limit` | Notes |
 |---------|-------------|-------|
