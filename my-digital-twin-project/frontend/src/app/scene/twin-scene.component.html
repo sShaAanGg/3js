@@ -1,0 +1,24 @@
+<div #canvasHost class="canvas-host"></div>
+
+<aside class="hud">
+  <h1>Digital Twin</h1>
+  @if (error(); as message) {
+    <p class="error">{{ message }}</p>
+  }
+  <table>
+    <thead>
+      <tr><th>Asset</th><th>Temp °C</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      @for (asset of assets(); track asset.id) {
+        <tr>
+          <td><span class="swatch" [style.background]="asset.color"></span>{{ asset.name }}</td>
+          <td>{{ asset.temperature.toFixed(1) }}</td>
+          <td [class]="'status ' + asset.status.toLowerCase()">{{ asset.status }}</td>
+        </tr>
+      } @empty {
+        <tr><td colspan="3">No assets yet</td></tr>
+      }
+    </tbody>
+  </table>
+</aside>

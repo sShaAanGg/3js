@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: digital-twin-backend
+  datasource:
+    # Defaults are for running outside Docker; docker-compose overrides them via env vars
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/digitaltwin}
+    username: ${SPRING_DATASOURCE_USERNAME:twin}
+    password: ${SPRING_DATASOURCE_PASSWORD:twin}
+  jpa:
+    # Schema is owned by database/init.sql
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+twin:
+  simulation:
+    enabled: true
+    interval-ms: 2000

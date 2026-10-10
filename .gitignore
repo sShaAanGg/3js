@@ -2,3 +2,9 @@
 node_modules/
 # ignore package-lock.json
 package-lock.json
+
+# digital twin project build output
+target/
+dist/
+.angular/
+.env
