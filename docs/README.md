@@ -17,3 +17,7 @@ Each component guide covers its own logs, debugging and tooling.
 - [Backend (Spring Boot)](../backend/README.md): API logs, health checks, simulator settings, running locally.
 - [Frontend (Angular + Three.js)](../frontend/README.md): nginx and dev-server logs, the `/api` proxy, browser checks.
 - [Database (PostgreSQL)](../database/README.md): connecting with `psql`, useful queries, resetting data.
+
+## Planning
+
+- [Ideas](../ideas/README.md): candidate product directions that set this project apart from typical DCIM and digital-twin tools.

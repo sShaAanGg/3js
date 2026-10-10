@@ -51,6 +51,8 @@
 │   ├── troubleshooting.md                     # logs, restarts, cross-service problems
 │   └── docker/
 │       └── README.md                          # Docker CE install guide (WSL Ubuntu)
+├── ideas/                                     # candidate product directions (not decided)
+│   └── README.md                              # overview, comparison, recommendation
 ├── docker-compose.yml                         # orchestrates db + backend + frontend
 ├── .env.example                               # DB credentials template (copy to .env)
 ├── .gitignore
@@ -70,6 +72,7 @@ How the pieces fit together:
 - [docs/README.md](docs/README.md): index of all guides.
 - [docs/troubleshooting.md](docs/troubleshooting.md): logs, restarts and common problems.
 - Component guides: [backend](backend/README.md), [frontend](frontend/README.md), [database](database/README.md).
+- [ideas/README.md](ideas/README.md): candidate directions for where the project goes next.
 
 ## Prerequisites
 
