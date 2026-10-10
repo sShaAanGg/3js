@@ -61,7 +61,7 @@ The thresholds for WARNING (35 °C) and ALARM (45 °C) are constants in `SensorS
 
 Code is in `history/`. Every meaningful change is stored in the `asset_event` table as a full snapshot of the asset. To rebuild the room at time T, the backend takes the newest snapshot per asset recorded at or before T.
 
-Most of the time machine lives here in the backend on purpose. `?at=` returns the same JSON as the live endpoint, so the 3D frontend barely changes, and history uses the existing Postgres instead of a new service. Both choices follow from the project's two constraints: Java first, and a laptop with less than 5 GB of free RAM. See [the decision summary](../ideas/README.md#decision-time-machine-first-2026-10-10).
+Most of the time machine lives here in the backend on purpose. `?at=` returns the same JSON as the live endpoint, so the 3D frontend barely changes, and history uses the existing Postgres instead of a new service. Both choices follow from the project's two constraints: Java first, and a laptop with less than 5 GB of free RAM. See [decision 0001](../docs/decisions/0001-time-machine-first.md).
 
 What gets recorded (`HistoryService`):
 
