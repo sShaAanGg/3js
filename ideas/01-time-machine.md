@@ -20,8 +20,8 @@ Charts tell you *a value* changed. Spatial replay tells you *where* it started a
 
 - Today `SensorSimulator` and `PUT /position` **overwrite** the `asset` row, so history is lost.
 - Add an append-only `asset_event` table (`asset_id, ts, kind, payload JSONB`). Keep `asset` as the "current state" projection, or derive it from the events.
-- Compress readings: store a reading only on change (delta > threshold), plus periodic keyframes, so replay can seek fast. TimescaleDB is a drop-in Postgres extension if volume grows.
-- New endpoints: `GET /api/state?at=<ts>` (keyframe + deltas) and `GET /api/events?from=&to=`.
+- Keep it small: store a reading only when it changes by more than a threshold. Each event holds the asset's full state, so seeking to any time means "latest event per asset before T", with no replaying of deltas. TimescaleDB is a drop-in Postgres extension if volume ever grows.
+- New endpoints: `GET /api/assets?at=<ts>` (same JSON as today) and `GET /api/history/events?from=&to=`.
 - Frontend: `twin-scene.component.ts` already maps assets to meshes, so it just needs a state source that can be "live" or "playback".
 
 ## MVP
@@ -32,6 +32,23 @@ Charts tell you *a value* changed. Spatial replay tells you *where* it started a
 4. Permalink with `t=`.
 
 Diff mode and event markers come next.
+
+## Status: chosen (2026-10-10)
+
+This is the direction we're building first. Two constraints shape the design:
+
+- **Under 5 GB of RAM** (one laptop running the whole stack): history lives in the existing Postgres, with no extra services. The JVM and Postgres get explicit memory caps, and a retention job keeps the table small.
+- **Java first, lighter on Angular/Three.js:** the logic lives in Spring. `GET /api/assets?at=<time>` returns exactly the same JSON as the live endpoint, so the 3D scene doesn't change. The frontend only gains a timeline bar.
+
+First milestone:
+
+1. `asset_event` table. Each row is a full snapshot of one asset at one moment, written only when something meaningful changes (a move, a status change, or a temperature change ≥ 0.5 °C).
+2. `GET /api/assets?at=`, `GET /api/history/range` and `GET /api/history/events`, with tests.
+3. Retention set in `application.yml`. The cleanup keeps the newest snapshot of each asset, so any time inside the window can still be rebuilt.
+4. Memory caps in `docker-compose.yml`.
+5. Timeline slider, play/pause and `?t=` permalinks in the UI.
+
+Later: compare mode, event markers on the timeline, push updates instead of polling.
 
 ## Risks / open questions
 
