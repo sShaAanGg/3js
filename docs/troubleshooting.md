@@ -92,3 +92,13 @@ The frontend's nginx forwards `/api/` to `http://backend:8080`. Work through thi
 ### The asset list is empty
 
 `init.sql` seeds four assets, but only on a fresh volume. If you deleted rows by hand, restore them by resetting the volume with `docker compose down -v`, or re-insert them using the queries in the [database guide](../database/README.md).
+
+### Backend fails at startup with `relation "asset_event" does not exist`
+
+The `asset_event` table was added to `init.sql` after your database volume was created, and `init.sql` only runs on an empty volume. Reset it with `docker compose down -v`, then `docker compose up --build`. This erases existing data, which is only simulated readings unless you added your own rows.
+
+### A container keeps restarting or exits with code 137
+
+Exit code 137 means the container hit its `mem_limit` and was killed. Check with `docker compose ps -a` and `docker inspect twin-backend --format '{{.State.OOMKilled}}'`. Raise the limit for that service in `docker-compose.yml`. For the backend, raise `-Xmx` in `JAVA_TOOL_OPTIONS` along with it.
+
+If the whole machine is slow rather than one container, WSL itself may be short on memory. See [Memory limits](../README.md#memory-limits) in the main README.

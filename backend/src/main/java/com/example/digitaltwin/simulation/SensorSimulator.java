@@ -2,6 +2,7 @@ package com.example.digitaltwin.simulation;
 
 import com.example.digitaltwin.asset.Asset;
 import com.example.digitaltwin.asset.AssetRepository;
+import com.example.digitaltwin.history.HistoryService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -21,9 +22,11 @@ public class SensorSimulator {
     private static final double ALARM_TEMP = 45.0;
 
     private final AssetRepository repository;
+    private final HistoryService history;
 
-    public SensorSimulator(AssetRepository repository) {
+    public SensorSimulator(AssetRepository repository, HistoryService history) {
         this.repository = repository;
+        this.history = history;
     }
 
     @Scheduled(fixedRateString = "${twin.simulation.interval-ms}")
@@ -37,6 +40,7 @@ public class SensorSimulator {
             asset.setStatus(next >= ALARM_TEMP ? Asset.Status.ALARM
                     : next >= WARNING_TEMP ? Asset.Status.WARNING
                     : Asset.Status.OK);
+            history.recordReading(asset);
         }
     }
 }

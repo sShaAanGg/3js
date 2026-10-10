@@ -11,11 +11,18 @@
 │   │   │   ├── asset/
 │   │   │   │   ├── Asset.java                 # JPA entity for the asset table
 │   │   │   │   ├── AssetRepository.java       # Spring Data repository
-│   │   │   │   └── AssetController.java       # REST API under /api/assets
+│   │   │   │   └── AssetController.java       # REST API under /api/assets (?at= for the past)
+│   │   │   ├── history/                       # time machine
+│   │   │   │   ├── AssetEvent.java            # JPA entity: one asset snapshot at one moment
+│   │   │   │   ├── AssetEventRepository.java  # "state at T" and retention queries
+│   │   │   │   ├── HistoryService.java        # records changes, rebuilds past state, cleanup
+│   │   │   │   ├── HistoryProperties.java     # twin.history.* settings
+│   │   │   │   └── HistoryController.java     # REST API under /api/history
 │   │   │   └── simulation/
 │   │   │       └── SensorSimulator.java       # fake sensor data (temperature/status)
 │   │   └── resources/
-│   │       └── application.yml                # DB connection, simulator settings
+│   │       └── application.yml                # DB connection, simulator and history settings
+│   ├── src/test/java/...                      # JUnit tests (H2 in-memory DB, no Docker needed)
 │   ├── README.md                              # API, logs, simulator settings
 │   ├── Dockerfile                             # Maven build → JRE 21 runtime
 │   ├── .dockerignore
@@ -24,11 +31,11 @@
 │   ├── src/
 │   │   ├── app/
 │   │   │   ├── scene/
-│   │   │   │   ├── twin-scene.component.ts    # Three.js scene, render loop, API polling
-│   │   │   │   ├── twin-scene.component.html  # canvas + status panel
+│   │   │   │   ├── twin-scene.component.ts    # Three.js scene, render loop, API polling, timeline
+│   │   │   │   ├── twin-scene.component.html  # canvas + status panel + timeline bar
 │   │   │   │   └── twin-scene.component.css
 │   │   │   ├── services/
-│   │   │   │   └── asset.service.ts           # HTTP client for /api/assets
+│   │   │   │   └── asset.service.ts           # HTTP client for /api/assets and /api/history
 │   │   │   ├── app.component.ts
 │   │   │   └── app.config.ts
 │   │   ├── index.html
@@ -44,7 +51,7 @@
 │   ├── .dockerignore
 │   └── package.json
 ├── database/                                  # SQL initialization scripts
-│   ├── init.sql                               # schema + seed assets (runs on first DB start)
+│   ├── init.sql                               # schema (asset, asset_event) + seed assets (first DB start)
 │   └── README.md                              # DB access, queries, resetting data
 ├── docs/
 │   ├── README.md                              # documentation index
@@ -61,11 +68,13 @@
 
 How the pieces fit together:
 
-- **db** (`postgres:16`) holds the `asset` table. `init.sql` seeds four assets.
+- **db** (`postgres:16`) holds the `asset` table (current state) and the `asset_event` table (history). `init.sql` seeds four assets.
 - **backend** exposes `GET /api/assets`, `GET /api/assets/{id}` and `PUT /api/assets/{id}/position`.
   `SensorSimulator` changes each asset's temperature every 2 s and sets its status to OK, WARNING (≥35 °C) or ALARM (≥45 °C).
+  Meaningful changes are recorded as history. `GET /api/assets?at=<time>` returns the room as it was then (see the [backend guide](backend/README.md#history-time-machine)).
 - **frontend** polls `/api/assets` every 2 s and draws each asset as a mesh.
   WARNING assets glow orange and ALARM assets pulse red. Use the mouse to orbit, pan and zoom.
+  The **timeline bar** at the bottom scrubs and replays history. The URL gets `?t=<time>`, so you can share a link to a moment.
 
 ## Documentation
 
@@ -108,6 +117,28 @@ curl -X PUT localhost:8080/api/assets/1/position \
 ```
 
 If something doesn't start or behaves oddly, see [docs/troubleshooting.md](docs/troubleshooting.md).
+
+## Memory limits
+
+The stack is tuned to run on a laptop with little free RAM. In `docker-compose.yml`:
+
+| Service | `mem_limit` | Notes |
+|---------|-------------|-------|
+| db | 256 MB | `shared_buffers=64MB`, `max_connections=20` |
+| backend | 640 MB | JVM heap capped with `-Xmx256m` in `JAVA_TOOL_OPTIONS` |
+| frontend | 64 MB | nginx serving static files |
+
+Builds use more memory than running. The Angular production build in particular can briefly need 1–2 GB. After a backend-only change, rebuild only the backend (`docker compose up --build backend`).
+
+On WSL, you can also cap the whole Linux VM so it can't starve Windows. Create `%UserProfile%\.wslconfig`:
+
+```ini
+[wsl2]
+memory=3GB
+swap=2GB
+```
+
+Then run `wsl --shutdown` from Windows and reopen the terminal.
 
 ## Developing
 
