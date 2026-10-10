@@ -35,10 +35,14 @@ Diff mode and event markers come next.
 
 ## Status: chosen (2026-10-10)
 
-This is the direction we're building first. Two constraints shape the design:
+This is the direction we're building first. The full discussion is summarized in [ideas/README.md](README.md#decision-time-machine-first-2026-10-10). In short, two real limits made this idea the best fit, and they also shape how it's built:
 
-- **Under 5 GB of RAM** (one laptop running the whole stack): history lives in the existing Postgres, with no extra services. The JVM and Postgres get explicit memory caps, and a retention job keeps the table small.
-- **Java first, lighter on Angular/Three.js:** the logic lives in Spring. `GET /api/assets?at=<time>` returns exactly the same JSON as the live endpoint, so the 3D scene doesn't change. The frontend only gains a timeline bar.
+- **Under 5 GB of free RAM** (one laptop running the whole stack under WSL2).
+  *Why it fits:* history lives in the Postgres we already run, so no new service is needed, and the data volume is tiny when only meaningful changes are stored.
+  *How it shapes the build:* explicit memory caps (`mem_limit` per container, `-Xmx256m` for the JVM, small Postgres buffers, a pool of 5 connections). A retention job keeps the table bounded. Full snapshots per row keep "state at T" a single query instead of replaying deltas in memory.
+- **Stronger in Java than in Angular/Three.js.**
+  *Why it fits:* nearly all of the work is Spring and SQL: the event table, the queries, retention, endpoints and tests.
+  *How it shapes the build:* `GET /api/assets?at=<time>` returns exactly the same JSON as the live endpoint, so the 3D scene doesn't change. The frontend only gains a timeline bar. 3D-heavy features like compare mode are deferred.
 
 First milestone:
 
