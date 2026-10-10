@@ -16,6 +16,7 @@
 │   │   │       └── SensorSimulator.java       # fake sensor data (temperature/status)
 │   │   └── resources/
 │   │       └── application.yml                # DB connection, simulator settings
+│   ├── README.md                              # API, logs, simulator settings
 │   ├── Dockerfile                             # Maven build → JRE 21 runtime
 │   ├── .dockerignore
 │   └── pom.xml
@@ -33,6 +34,7 @@
 │   │   ├── index.html
 │   │   ├── main.ts
 │   │   └── styles.css
+│   ├── README.md                              # logs, proxy, browser debugging
 │   ├── Dockerfile                             # Node build → nginx runtime
 │   ├── nginx.conf                             # serves the app, proxies /api → backend
 │   ├── proxy.conf.json                        # /api proxy for `npm start` (local dev)
@@ -42,8 +44,11 @@
 │   ├── .dockerignore
 │   └── package.json
 ├── database/                                  # SQL initialization scripts
-│   └── init.sql                               # schema + seed assets (runs on first DB start)
+│   ├── init.sql                               # schema + seed assets (runs on first DB start)
+│   └── README.md                              # DB access, queries, resetting data
 ├── docs/
+│   ├── README.md                              # documentation index
+│   ├── troubleshooting.md                     # logs, restarts, cross-service problems
 │   └── docker/
 │       └── README.md                          # Docker CE install guide (WSL Ubuntu)
 ├── docker-compose.yml                         # orchestrates db + backend + frontend
@@ -59,6 +64,12 @@ How the pieces fit together:
   `SensorSimulator` changes each asset's temperature every 2 s and sets its status to OK, WARNING (≥35 °C) or ALARM (≥45 °C).
 - **frontend** polls `/api/assets` every 2 s and draws each asset as a mesh.
   WARNING assets glow orange and ALARM assets pulse red. Use the mouse to orbit, pan and zoom.
+
+## Documentation
+
+- [docs/README.md](docs/README.md): index of all guides.
+- [docs/troubleshooting.md](docs/troubleshooting.md): logs, restarts and common problems.
+- Component guides: [backend](backend/README.md), [frontend](frontend/README.md), [database](database/README.md).
 
 ## Prerequisites
 
@@ -92,6 +103,8 @@ docker compose down -v             # stop and DELETE the database, so init.sql r
 curl -X PUT localhost:8080/api/assets/1/position \
      -H 'Content-Type: application/json' -d '{"x":3,"y":0.5,"z":-2}'
 ```
+
+If something doesn't start or behaves oddly, see [docs/troubleshooting.md](docs/troubleshooting.md).
 
 ## Developing
 
