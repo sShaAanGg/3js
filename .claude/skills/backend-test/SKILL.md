@@ -13,7 +13,7 @@ description: Build and test the Spring Boot backend, including on a machine with
    curl -fsSL https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz | tar -xz -C $T/maven --strip-components=1
    JAVA_HOME=$T/jdk MAVEN_OPTS=-Xmx512m $T/maven/bin/mvn -B -f backend/pom.xml -Dmaven.repo.local=$T/m2 package
    ```
-   Keep `MAVEN_OPTS=-Xmx512m`: the laptop has under 5 GB free.
+   Keep `MAVEN_OPTS=-Xmx512m`: the laptop has under 3 GB free.
 3. Unit and repository tests run on H2, so they never execute `database/init.sql` or Postgres-specific SQL.
 4. For SQL or schema changes, also run a **throwaway** smoke test on real Postgres. Add `io.zonky.test:embedded-postgres:2.1.0` (test scope) and a `@SpringBootTest` that loads `../database/init.sql`, then call the endpoints. Delete both afterwards and don't commit them.
 5. In the PR, report the test counts, and say what was *not* run (e.g. `docker compose up`, the browser UI).

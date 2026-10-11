@@ -7,7 +7,7 @@ description: Record why a design option was chosen over others. Use after any di
 
 1. Ask **why** before writing: why this option, why not the others? If the owner's reason is missing or weak, ask, and point out anything that seems unreasonable.
 2. Check the choice against the standing constraints:
-   - less than 5 GB of free RAM on one laptop (no extra services; cap the JVM, Postgres and containers)
+   - less than 3 GB of free RAM on one laptop
    - Java first, lighter on Angular/Three.js (logic in Spring, small frontend changes)
 3. Write a short record in `docs/decisions/NNNN-<slug>.md` and add it to the table in `docs/decisions/README.md`:
    ```markdown

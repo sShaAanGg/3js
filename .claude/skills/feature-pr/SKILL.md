@@ -8,7 +8,7 @@ description: Take a code change from branch to a reviewable pull request. Use fo
 1. Branch from `origin/main` (`feature/<slug>`). Never push code to `main`.
 2. Build and test with `backend-test` and/or `frontend-build`. For schema work, also follow `schema-change`.
 3. Update docs in the same PR (`docs-update`), and record the why (`design-decision`).
-4. Commit as the repo owner if git has no identity: `git -c user.name=… -c user.email=… commit`.
+4. Commit as the git user configured in the repo; don't override the author.
 5. PR body sections:
    - **What changes**: backend / frontend / ops, a few bullets each.
    - **Review guide**: the files in the order to read them.

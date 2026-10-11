@@ -37,7 +37,7 @@ Diff mode and event markers come next.
 
 This is the direction we're building first. The full discussion is summarized in [decision 0001](../docs/decisions/0001-time-machine-first.md). In short, two real limits made this idea the best fit, and they also shape how it's built:
 
-- **Under 5 GB of free RAM** (one laptop running the whole stack under WSL2).
+- **Under 3 GB of free RAM.**
   *Why it fits:* history lives in the Postgres we already run, so no new service is needed, and the data volume is tiny when only meaningful changes are stored.
   *How it shapes the build:* explicit memory caps (`mem_limit` per container, `-Xmx256m` for the JVM, small Postgres buffers, a pool of 5 connections). A retention job keeps the table bounded. Full snapshots per row keep "state at T" a single query instead of replaying deltas in memory.
 - **Stronger in Java than in Angular/Three.js.**
