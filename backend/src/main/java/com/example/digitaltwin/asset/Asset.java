@@ -88,4 +88,6 @@ public class Asset {
     public void setTemperature(double temperature) { this.temperature = temperature; }
 
     public Instant getUpdatedAt() { return updatedAt; }
+    /** Only for detached copies rebuilt from history; saved assets get this from {@link #touch()}. */
+    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 }
