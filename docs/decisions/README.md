@@ -13,3 +13,4 @@ Name files `NNNN-short-title.md` (numbered in order, never renumbered). Sections
 |---|----------|------|
 | [0001](0001-time-machine-first.md) | Build the time machine first | 2026-10-10 |
 | [0002](0002-requirements-as-issues.md) | Define requirements as GitHub issues before planning | 2026-10-11 |
+| [0003](0003-link-prs-to-issues.md) | Link PRs to issues with "Closes #N" in the body | 2026-10-11 |
