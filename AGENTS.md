@@ -4,7 +4,7 @@ Keep these in memory for every session.
 
 ## Standing constraints
 
-- Less than 3 GB of free RAM on one laptop running the whole stack under WSL2. Cap the JVM, Postgres and containers, and avoid new services.
+- Less than 3 GB of free RAM on one laptop running the whole stack under WSL2. Cap the JVM, Postgres and containers.
 
 1. Record a summary, or at least the key points, of every discussion about a design choice.
     - Create or update a decision record in [`docs/decisions/`](docs/decisions/README.md).
@@ -30,7 +30,7 @@ Some questions to keep in mind, for me and for the agents:
 2. How do we find, reproduce, debug and fix a bug or an error?
 3. Based on 2, can we prove that the fix is correct? A fix counts as proven when a test fails before it and passes after it.
   - For 2 and 3, document the details in the related GitHub issue.
-4. The project is intended to be an exploration for software development, so we might focus on different topics as it evolve.
-  - Feel free to update the ideas that haven't been choosen.
+4. The project is intended to be an exploration for software development, so we might focus on different topics as it evolves.
+  - Feel free to update the ideas that haven't been chosen.
 
 Repeatable procedures are in [`.claude/skills/`](.claude/skills/README.md).

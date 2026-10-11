@@ -4,7 +4,7 @@
 
 Seven product directions were proposed in [`ideas/`](../../ideas/README.md), with a recommendation to start with #1, the time machine. After review, two real limits came up. Both are design constraints, not temporary inconveniences:
 
-- **Less than 3 GB of free memory** (lowered from 5 GB on 2026-10-11). The whole stack (Postgres, the Spring Boot JVM, nginx, plus Docker builds) runs on one laptop under WSL2.
+- **Less than 3 GB of free memory.** The whole stack (Postgres, the Spring Boot JVM, nginx, plus Docker builds) runs on one laptop under WSL2.
 - **Java is the strong side, Angular and Three.js less so.** Work in Spring is faster to build, review and debug than frontend or 3D work.
 
 ## Options
