@@ -12,3 +12,4 @@ Name files `NNNN-short-title.md` (numbered in order, never renumbered). Sections
 | # | Decision | Date |
 |---|----------|------|
 | [0001](0001-time-machine-first.md) | Build the time machine first | 2026-10-10 |
+| [0002](0002-requirements-as-issues.md) | Define requirements as GitHub issues before planning | 2026-10-11 |
