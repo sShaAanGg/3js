@@ -19,7 +19,7 @@ Keep these in memory for every session.
     - Keep each commit small enough to review. Early scaffolding may be large.
     - The point is to maintain lower noise and better abstraction in comments and discussions
 6. Make every change through a pull request, docs included. Never push to `main` directly.
-    - I'll merge PRs in person.
+    - I'll merge PRs in person, but you could commit like me in my user name & email.
 
 ## Reminders
 
@@ -28,7 +28,8 @@ Some questions to keep in mind, for me and for the agents:
 1. What is the rationale of we making major decisions? Could we keep the process of making simple and in track?
 2. How do we find, reproduce, debug and fix a bug or an error?
 3. Based on 2, can we prove that the fix is correct? A fix counts as proven when a test fails before it and passes after it.
-
-- For 2 and 3, document the details in the related GitHub issue.
+  - For 2 and 3, document the details in the related GitHub issue.
+4. The project is intended to be an exploration for software development, so we might focus on different topics as it evolve.
+  - Feel free to update the ideas that haven't been choosen.
 
 Repeatable procedures are in [`.claude/skills/`](.claude/skills/README.md).
