@@ -19,7 +19,7 @@ Keep these in memory for every session.
     - Keep each commit small enough to review. Early scaffolding may be large.
     - The point is to maintain lower noise and better abstraction in comments and discussions
 6. Make every change through a pull request, docs included. Never push to `main` directly.
-    - I'll merge PRs in person, but you could commit like me in my user name & email.
+    - I'll merge PRs in person.
 7. For gh review and reply, act as a co-worker on GH. Put your reply and comments on GH.
 
 ## Reminders
