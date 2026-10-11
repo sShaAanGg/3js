@@ -21,3 +21,5 @@ Each component guide covers its own logs, debugging and tooling.
 ## Planning
 
 - [Ideas](../ideas/README.md): candidate product directions that set this project apart from typical DCIM and digital-twin tools.
+- [Design decisions](decisions/README.md): why we chose each direction or design over the alternatives.
+- [Agent instructions](../AGENTS.md) and [skills](../.claude/skills/README.md): rules and procedures for LLM agents working in this repo.

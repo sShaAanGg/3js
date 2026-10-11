@@ -49,10 +49,14 @@
 ├── docs/
 │   ├── README.md                              # documentation index
 │   ├── troubleshooting.md                     # logs, restarts, cross-service problems
+│   ├── decisions/                             # design decision records (why X over Y)
 │   └── docker/
 │       └── README.md                          # Docker CE install guide (WSL Ubuntu)
 ├── ideas/                                     # candidate product directions (not decided)
 │   └── README.md                              # overview, comparison, recommendation
+├── .claude/skills/                            # repeatable procedures for LLM agents
+├── AGENTS.md                                  # rules for LLM agents (CLAUDE.md imports it)
+├── CLAUDE.md
 ├── docker-compose.yml                         # orchestrates db + backend + frontend
 ├── .env.example                               # DB credentials template (copy to .env)
 ├── .gitignore
