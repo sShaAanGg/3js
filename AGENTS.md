@@ -19,7 +19,7 @@ Keep these in memory for every session.
 
 Some questions to keep in mind, for me and for the agents:
 
-1. Why would we choose something (a design, an implementation, a pattern) over the others?
+1. What is the rationale of we making major decisions? Could we keep the process of making simple and in track?
 2. How do we find, reproduce, debug and fix a bug or an error?
 3. Based on 2, can we prove that the fix is correct? A fix counts as proven when a test fails before it and passes after it.
 
