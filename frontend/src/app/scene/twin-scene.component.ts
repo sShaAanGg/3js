@@ -6,16 +6,20 @@ import {
   NgZone,
   OnDestroy,
   ViewChild,
+  computed,
   inject,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { catchError, of, switchMap, timer } from 'rxjs';
+import { Subject, catchError, merge, of, switchMap, tap, timer } from 'rxjs';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Asset, AssetService, AssetStatus } from '../services/asset.service';
 
 const POLL_MS = 2000;
+
+/** How many seconds of history one second of playback covers. */
+const PLAYBACK_SPEEDS = [1, 10, 60, 600];
 
 const STATUS_EMISSIVE: Record<AssetStatus, number> = {
   OK: 0x000000,
@@ -38,6 +42,23 @@ export class TwinSceneComponent implements AfterViewInit, OnDestroy {
   readonly assets = signal<Asset[]>([]);
   readonly error = signal<string | null>(null);
 
+  // ---- Time machine state ----
+  readonly playbackSpeeds = PLAYBACK_SPEEDS;
+  /** The moment being shown, in epoch milliseconds, or null when following live data. */
+  readonly viewTime = signal<number | null>(timeFromUrl());
+  readonly playing = signal(false);
+  readonly speed = signal(10);
+  /** Oldest and newest moment the slider can reach, in epoch milliseconds. */
+  readonly range = signal<{ earliest: number; latest: number } | null>(null);
+  readonly isLive = computed(() => this.viewTime() === null);
+  readonly sliderValue = computed(() => this.viewTime() ?? this.range()?.latest ?? 0);
+  readonly timeLabel = computed(() => {
+    const t = this.viewTime();
+    return t === null ? 'LIVE' : new Date(t).toLocaleString();
+  });
+  /** Emits when the user scrubs, so the scene updates right away instead of on the next poll. */
+  private readonly reload$ = new Subject<void>();
+
   private renderer!: THREE.WebGLRenderer;
   private scene!: THREE.Scene;
   private camera!: THREE.PerspectiveCamera;
@@ -50,10 +71,12 @@ export class TwinSceneComponent implements AfterViewInit, OnDestroy {
     // Render loop runs outside Angular so it doesn't trigger change detection every frame
     this.zone.runOutsideAngular(() => this.renderer.setAnimationLoop((t) => this.animate(t)));
 
-    timer(0, POLL_MS)
+    // Every poll tick (and every scrub) fetches the assets for the current view time.
+    // switchMap cancels a request that is still running when a newer one starts.
+    merge(timer(0, POLL_MS).pipe(tap(() => this.advancePlayback())), this.reload$)
       .pipe(
         switchMap(() =>
-          this.assetService.list().pipe(
+          this.assetService.list(this.atParam()).pipe(
             catchError((err) => {
               this.error.set(`Backend unreachable (${err.status ?? 'network error'})`);
               return of(null);
@@ -68,6 +91,63 @@ export class TwinSceneComponent implements AfterViewInit, OnDestroy {
         this.assets.set(assets);
         this.syncMeshes(assets);
       });
+
+    timer(0, POLL_MS)
+      .pipe(
+        switchMap(() => this.assetService.range().pipe(catchError(() => of(null)))),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe((range) => {
+        if (range) this.range.set({ earliest: Date.parse(range.earliest), latest: Date.parse(range.latest) });
+      });
+  }
+
+  /** Slider moved: jump to that moment, or back to live if it was dragged to the end. */
+  onScrub(event: Event): void {
+    const value = Math.round((event.target as HTMLInputElement).valueAsNumber);
+    const latest = this.range()?.latest;
+    if (latest !== undefined && value >= latest) {
+      this.goLive();
+    } else {
+      this.showTime(value);
+    }
+  }
+
+  onSpeedChange(event: Event): void {
+    this.speed.set(Number((event.target as HTMLSelectElement).value));
+  }
+
+  togglePlay(): void {
+    this.playing.update((p) => !p);
+  }
+
+  goLive(): void {
+    this.playing.set(false);
+    this.showTime(null);
+  }
+
+  /** Called on each poll tick: while playing, move the view time forward by speed × tick. */
+  private advancePlayback(): void {
+    const t = this.viewTime();
+    if (!this.playing() || t === null) return;
+    const next = t + POLL_MS * this.speed();
+    if (next >= (this.range()?.latest ?? Date.now())) {
+      this.goLive();
+    } else {
+      this.viewTime.set(next);
+      updateUrl(next);
+    }
+  }
+
+  private showTime(t: number | null): void {
+    this.viewTime.set(t);
+    updateUrl(t);
+    this.reload$.next();
+  }
+
+  private atParam(): string | undefined {
+    const t = this.viewTime();
+    return t === null ? undefined : new Date(t).toISOString();
   }
 
   ngOnDestroy(): void {
@@ -181,4 +261,22 @@ export class TwinSceneComponent implements AfterViewInit, OnDestroy {
     this.controls.update();
     this.renderer.render(this.scene, this.camera);
   }
+}
+
+/** Reads `?t=<ISO time>` so a link can open the room at a given moment. */
+function timeFromUrl(): number | null {
+  const t = new URLSearchParams(window.location.search).get('t');
+  const ms = t ? Date.parse(t) : NaN;
+  return Number.isNaN(ms) ? null : ms;
+}
+
+/** Keeps `?t=` in the address bar in sync, so the current view can be shared as a link. */
+function updateUrl(t: number | null): void {
+  const url = new URL(window.location.href);
+  if (t === null) {
+    url.searchParams.delete('t');
+  } else {
+    url.searchParams.set('t', new Date(t).toISOString());
+  }
+  window.history.replaceState(null, '', url);
 }

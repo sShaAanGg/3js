@@ -2,6 +2,17 @@
 
 Angular 19 app that draws the assets in a Three.js scene. Source is in `src/app/`. The main component is `scene/twin-scene.component.ts`, which owns the render loop and polls `/api/assets` every 2 seconds.
 
+## Timeline (time machine)
+
+The bar at the bottom of the screen controls which moment the scene shows:
+
+- **Drag the slider** to jump to any time between the oldest stored event and now. The bar gets a blue edge while you're looking at the past.
+- **Play / Pause** replays from there at the chosen speed (1×, 10×, 60× or 600× real time). Playback switches back to live when it reaches the present.
+- **Live** returns to current data.
+- The address bar keeps `?t=<ISO time>` in sync, so you can copy the URL to share that moment. Opening a URL with `?t=` starts there.
+
+How it works, briefly: the component keeps `viewTime` (a signal). When it's `null`, the scene is live. Otherwise each poll calls `/api/assets?at=<viewTime>`. The backend returns the same JSON either way, so the Three.js code doesn't know or care whether it's drawing the past. The slider bounds come from `/api/history/range`, which is polled alongside the assets.
+
 ## How requests reach the backend
 
 - **In Docker**, the browser loads the app from nginx on port 4200. `nginx.conf` forwards any `/api/` request to `http://backend:8080`.
