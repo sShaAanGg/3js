@@ -1,7 +1,12 @@
+# Memory: the mem_limit values below cap the whole stack at roughly 1 GB,
+# so it fits on a laptop with little free RAM. See "Memory limits" in README.md.
 services:
   db:
     image: postgres:16-alpine
     container_name: twin-db
+    # Small buffers: the dataset is tiny, and the backend uses at most 5 connections
+    command: ["postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=20"]
+    mem_limit: 256m
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-digitaltwin}
       POSTGRES_USER: ${POSTGRES_USER:-twin}
@@ -25,6 +30,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-digitaltwin}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-twin}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-twin}
+      # Fixed heap so memory use is predictable. Heap 256 MB + metaspace, threads and
+      # code cache stays well under the 640 MB container limit.
+      JAVA_TOOL_OPTIONS: -Xmx256m -XX:MaxMetaspaceSize=128m -XX:+UseSerialGC
+    mem_limit: 640m
     depends_on:
       db:
         condition: service_healthy
@@ -34,6 +43,7 @@ services:
   frontend:
     build: ./frontend
     container_name: twin-frontend
+    mem_limit: 64m
     depends_on:
       - backend
     ports:

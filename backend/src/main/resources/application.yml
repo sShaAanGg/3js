@@ -9,6 +9,9 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/digitaltwin}
     username: ${SPRING_DATASOURCE_USERNAME:twin}
     password: ${SPRING_DATASOURCE_PASSWORD:twin}
+    hikari:
+      # A handful of connections is plenty here and keeps Postgres memory low
+      maximum-pool-size: 5
   jpa:
     # Schema is owned by database/init.sql
     hibernate:
@@ -25,3 +28,10 @@ twin:
   simulation:
     enabled: true
     interval-ms: 2000
+  history:
+    # Store a new reading only when the temperature moved at least this much (°C).
+    # Moves and status changes are always stored.
+    min-temperature-delta: 0.5
+    # How long history is kept, e.g. 12h, 7d, 30d
+    retention: 7d
+    cleanup-interval-ms: 3600000
