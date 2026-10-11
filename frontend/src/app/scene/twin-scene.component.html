@@ -22,3 +22,29 @@
     </tbody>
   </table>
 </aside>
+
+<footer class="timeline" [class.past]="!isLive()">
+  @if (range(); as r) {
+    <button type="button" (click)="togglePlay()" [disabled]="isLive()">
+      {{ playing() ? 'Pause' : 'Play' }}
+    </button>
+    <select (change)="onSpeedChange($event)" title="Playback speed">
+      @for (s of playbackSpeeds; track s) {
+        <option [value]="s" [selected]="s === speed()">{{ s }}×</option>
+      }
+    </select>
+    <input
+      type="range"
+      [min]="r.earliest"
+      [max]="r.latest"
+      step="any"
+      [value]="sliderValue()"
+      (input)="onScrub($event)"
+      aria-label="Time"
+    />
+    <span class="time-label">{{ timeLabel() }}</span>
+    <button type="button" (click)="goLive()" [disabled]="isLive()">Live</button>
+  } @else {
+    <span class="time-label">Loading history…</span>
+  }
+</footer>

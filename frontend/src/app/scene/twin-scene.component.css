@@ -52,3 +52,38 @@
   margin: 0 0 8px;
   color: #d00000;
 }
+
+.timeline {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+}
+
+/* Blue edge while showing the past, so it's never mistaken for live data */
+.timeline.past {
+  box-shadow: 0 0 0 2px #2563eb, 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.timeline input[type='range'] {
+  flex: 1;
+}
+
+.time-label {
+  min-width: 170px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.timeline:not(.past) .time-label {
+  color: #1a7f37;
+  font-weight: 700;
+}
