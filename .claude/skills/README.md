@@ -12,4 +12,4 @@ Short, repeatable procedures for this repo. Each lives in `<name>/SKILL.md` (fro
 | [potential-issue](potential-issue/SKILL.md) | You spot a risk: file a GitHub issue labelled `potential` |
 | [feature-pr](feature-pr/SKILL.md) | Taking a code change from branch to reviewable PR |
 
-Standing constraints every skill assumes: less than 5 GB of free RAM on one laptop, and Java first (lighter on Angular/Three.js). The rules for agents are in [`AGENTS.md`](../../AGENTS.md).
+Standing constraint every skill assumes: Java first (lighter on Angular/Three.js). The RAM limit is in [`AGENTS.md`](../../AGENTS.md).

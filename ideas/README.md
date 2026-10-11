@@ -18,7 +18,7 @@ Effort assumes one person working evenings: **S** ≈ a few weekends, **M** ≈ 
 
 ## Decision
 
-We chose **#1, Time machine** first because of two constraints: less than 5 GB of free RAM, and Java first. The reasoning is recorded in [docs/decisions/0001-time-machine-first.md](../docs/decisions/0001-time-machine-first.md).
+We chose **#1, Time machine** first because of two constraints: less than 3 GB of free RAM, and Java first. The reasoning is recorded in [docs/decisions/0001-time-machine-first.md](../docs/decisions/0001-time-machine-first.md).
 
 ## How they fit together
 
