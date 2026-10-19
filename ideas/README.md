@@ -13,12 +13,15 @@ These are product directions, not a backlog. Each one tries to be *different* fr
 | 5 | [Drill mode](05-drill-mode.md) | Game-style fault injection to train people and test runbooks | M | High |
 | 6 | [Ambient twin](06-ambient-twin.md) | A calm wall display plus sound: hear the room before you read it | S | Very high |
 | 7 | [Agent-native twin](07-agent-native-twin.md) | The twin as a tool AI agents use, with their actions shown in 3D | M | Medium (crowded space) |
+| 8 | [Math and simulation](08-math-and-simulation.md) ⏭ **next, after #1** | A small physical thermal model in place of random noise, then prediction from history | S + M | Medium–High |
 
 Effort assumes one person working evenings: **S** ≈ a few weekends, **M** ≈ 1–2 months, **L** ≈ a quarter or more.
 
 ## Decision
 
 We chose **#1, Time machine** first because of two constraints: less than 3 GB of free RAM, and Java first. The reasoning is recorded in [docs/decisions/0001-time-machine-first.md](../docs/decisions/0001-time-machine-first.md).
+
+**#8, Math and simulation** comes next, once the time machine ships: first the thermal model, then prediction. See [docs/decisions/0004-math-after-time-machine.md](../docs/decisions/0004-math-after-time-machine.md).
 
 ## How they fit together
 
@@ -36,6 +39,7 @@ Several ideas share foundations, so the order matters more than the pick:
  3 Blast radius ── needs a dependency graph (new table), independent of the log
  4 Homelab twin ── needs real data adapters instead of SensorSimulator
  6 Ambient twin ── can sit on top of what exists today
+ 8 Math/simulation ── thermal model replaces SensorSimulator; prediction reads the log
 ```
 
 ## My recommendation
