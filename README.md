@@ -1,4 +1,4 @@
-# Digital Twin (Spring Boot + Angular/Three.js + PostgreSQL)
+# A Three.js Playground with Some Ideas I'm interested in
 
 ## Project structure
 
